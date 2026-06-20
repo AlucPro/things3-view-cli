@@ -16,7 +16,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "vitest run",
+    "test": "npm run build && vitest run --exclude '**/.worktrees/**'",
     "test:watch": "vitest",
     "check": "tsc --noEmit"
   },
