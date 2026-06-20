@@ -29,4 +29,14 @@ export class ThingsSqliteRepository {
     for (const row of this.db.prepare(`SELECT tt.tasks task,tag.uuid id,tag.title FROM TMTaskTag tt JOIN TMTag tag ON tag.uuid=tt.tags WHERE tt.tasks IN (${marks}) ORDER BY tag.title COLLATE NOCASE`).all(...ids) as any[]) byId.get(row.task)?.tags.push({ id: row.id, title: row.title });
     return tasks;
   }
+
+  findOpenTaskById(id: string): TaskView | undefined {
+    return this.listOpenTasks().find((task) => task.id === id);
+  }
+
+  findProjectsByExactIdOrName(query: string): ProjectView[] {
+    const projects = this.listProjects();
+    const exactId = projects.filter((project) => project.id === query);
+    return exactId.length > 0 ? exactId : projects.filter((project) => project.title.toLocaleLowerCase() === query.toLocaleLowerCase());
+  }
 }
