@@ -2,6 +2,7 @@
   "name": "things3-view-cli",
   "version": "0.1.0",
   "private": true,
+  "files": ["dist", "README.md", "LICENSE"],
   "type": "module",
   "bin": {
     "td": "./dist/index.js"

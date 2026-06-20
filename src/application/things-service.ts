@@ -27,4 +27,16 @@ export class ThingsService {
   }
   listOpenTasks(projectQuery?: string) { return this.repository.listOpenTasks(projectQuery ? this.resolveProject(projectQuery).id : undefined); }
   getOpenTaskForMutation(id: string) { const task = this.repository.findOpenTaskById(id); if (!task) throw new NotFoundError(`未找到未完成事项: ${id}`); return task; }
+  async add(input: Parameters<ThingsWriter['add']>[0]): Promise<void> { await this.writer.add(input); }
+  async complete(id: string, options: { verify?: boolean; delays?: number[] } = {}): Promise<{ state: 'verified' | 'unverified' }> {
+    this.getOpenTaskForMutation(id); await this.writer.complete(id); return this.verify(id, options);
+  }
+  async cancel(id: string, options: { verify?: boolean; delays?: number[] } = {}): Promise<{ state: 'verified' | 'unverified' }> {
+    this.getOpenTaskForMutation(id); await this.writer.cancel(id); return this.verify(id, options);
+  }
+  private async verify(id: string, options: { verify?: boolean; delays?: number[] }): Promise<{ state: 'verified' | 'unverified' }> {
+    if (!options.verify) return { state: 'unverified' };
+    for (const delay of options.delays ?? [150, 300, 600]) { if (delay) await new Promise((resolve) => setTimeout(resolve, delay)); if (!this.repository.findOpenTaskById(id)) return { state: 'verified' }; }
+    return { state: 'unverified' };
+  }
 }
