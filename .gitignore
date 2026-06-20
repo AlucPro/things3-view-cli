@@ -73,6 +73,8 @@ web_modules/
 # Local Things database snapshots contain private task data.
 backups/
 .worktrees/
+.superpowers/
+.ai-context/
 dist/
 
 # parcel-bundler cache (https://parceljs.org/)
